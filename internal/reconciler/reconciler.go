@@ -94,3 +94,22 @@ func Render(entries []parser.Entry) string {
 	}
 	return sb.String()
 }
+
+// Summary returns a human-readable summary of the planned actions,
+// listing counts per kind and each action's comment.
+func Summary(actions []Action) string {
+	if len(actions) == 0 {
+		return "no changes required"
+	}
+
+	counts := map[string]int{}
+	var lines []string
+	for _, a := range actions {
+		counts[a.Kind]++
+		lines = append(lines, fmt.Sprintf("  [%s] %s", a.Kind, a.Comment))
+	}
+
+	header := fmt.Sprintf("%d action(s): %d add, %d update, %d remove",
+		len(actions), counts["add"], counts["update"], counts["remove"])
+	return header + "\n" + strings.Join(lines, "\n")
+}
